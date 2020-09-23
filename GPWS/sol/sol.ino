@@ -123,7 +123,7 @@ void setup() {
   height = 0;
 
   // if the height is superior to something reasonable at startup,
-  // or the height is inferior to a reasonalbe height
+  // or the height is inferior to a reasonable height
   // signal something might be wrong to the user and don't start up
   if(height > MAX_START_HEIGHT || height < MIN_REAL_HEIGHT) {
     malfunction(WARNING, STATUS);
