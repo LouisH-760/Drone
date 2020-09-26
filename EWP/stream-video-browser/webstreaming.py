@@ -17,7 +17,7 @@ import cv2
 WIDTH = 800
 
 # text stuff for the watermark
-watermark = "Drone V2 ISFATES - Caméra Embarquée"
+watermark = "Drone V2 ISFATES - Camera Embarquee"
 font = cv2.FONT_HERSHEY_SIMPLEX
 position = (10, 20)
 fontScale = 0.5
