@@ -2,7 +2,6 @@
 # python webstreaming.py --ip 0.0.0.0 --port 8000
 
 # import the necessary packages
-from pyimagesearch.motion_detection import SingleMotionDetector
 from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
@@ -13,6 +12,17 @@ import datetime
 import imutils
 import time
 import cv2
+
+# temp width, adjust with smartphone / ... width
+WIDTH = 800
+
+# text stuff for the watermark
+watermark = "Drone V2 ISFATES - Caméra Embarquée"
+font = cv2.FONT_HERSHEY_SIMPLEX
+position = (10, 20)
+fontScale = 0.5
+fontColor = (0, 0, 255) # red
+lineThickness = 1
 
 # initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful for multiple browsers/tabs
@@ -34,51 +44,18 @@ def index():
 	# return the rendered template
 	return render_template("index.html")
 
-def detect_motion(frameCount):
-	# grab global references to the video stream, output frame, and
-	# lock variables
-	global vs, outputFrame, lock
-
-	# initialize the motion detector and the total number of frames
-	# read thus far
-	md = SingleMotionDetector(accumWeight=0.1)
-	total = 0
-
-	# loop over frames from the video stream
+def process_frame():
+	# needs to run in a loop, otherwise the app will only display one frame
 	while True:
-		# read the next frame from the video stream, resize it,
-		# convert the frame to grayscale, and blur it
+		# grab global references to the video stream, output frame, and
+		# lock variables
+		global vs, outputFrame, lock
+		# get a frame from the cam
 		frame = vs.read()
-		frame = imutils.resize(frame, width=400)
-		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-		gray = cv2.GaussianBlur(gray, (7, 7), 0)
-
-		# grab the current timestamp and draw it on the frame
-		timestamp = datetime.datetime.now()
-		cv2.putText(frame, timestamp.strftime(
-			"%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
-			cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-
-		# if the total number of frames has reached a sufficient
-		# number to construct a reasonable background model, then
-		# continue to process the frame
-		if total > frameCount:
-			# detect motion in the image
-			motion = md.detect(gray)
-
-			# cehck to see if motion was found in the frame
-			if motion is not None:
-				# unpack the tuple and draw the box surrounding the
-				# "motion area" on the output frame
-				(thresh, (minX, minY, maxX, maxY)) = motion
-				cv2.rectangle(frame, (minX, minY), (maxX, maxY),
-					(0, 0, 255), 2)
-		
-		# update the background model and increment the total number
-		# of frames read thus far
-		md.update(gray)
-		total += 1
-
+		#resize it using the width we want
+		frame = imutils.resize(frame, width=WIDTH)
+		# add the watermark to the image
+		cv2.putText(frame, watermark, position, font, fontScale, fontColor, lineThickness)
 		# acquire the lock, set the output frame, and release the
 		# lock
 		with lock:
@@ -128,8 +105,7 @@ if __name__ == '__main__':
 	args = vars(ap.parse_args())
 
 	# start a thread that will perform motion detection
-	t = threading.Thread(target=detect_motion, args=(
-		args["frame_count"],))
+	t = threading.Thread(target=process_frame)
 	t.daemon = True
 	t.start()
 
