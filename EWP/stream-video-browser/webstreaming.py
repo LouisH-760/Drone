@@ -13,16 +13,31 @@ import imutils
 import time
 import cv2
 
+# distance from the border for the text
+OFFSET = 10
+
 # temp width, adjust with smartphone / ... width
 WIDTH = 800
 
-# text stuff for the watermark
-watermark = "Drone V2 ISFATES - Camera Embarquee"
+# timestamp FORMATTING
+FORMAT = "%m/%d/%Y, %H:%M:%S"
+
+# general text stuff
 font = cv2.FONT_HERSHEY_SIMPLEX
-position = (10, 20)
-fontScale = 0.5
 fontColor = (0, 0, 255) # red
 lineThickness = 1
+
+# text stuff for the watermark
+watermark = "Drone V2 ISFATES - Camera Embarquee"
+fontScaleWatermark = 0.5
+(tmpWidth, tmpHeight) = cv2.getTextSize(watermark, font, fontScaleWatermark, lineThickness)
+positionWatermark = (OFFSET, OFFSET + tmpHeight * 2)
+
+# positioning stuff for the timestamp
+positionTimestamp = (OFFSET, (OFFSET + tmpHeight*2)*2)
+time = datetime.datetime.now()
+fontScaleTimestamp = 0.4
+
 
 # initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful for multiple browsers/tabs
@@ -37,7 +52,7 @@ app = Flask(__name__)
 # warmup
 #vs = VideoStream(usePiCamera=1).start()
 vs = VideoStream(src=0).start()
-time.sleep(2.0)
+#time.sleep(2.0)
 
 @app.route("/")
 def index():
@@ -55,7 +70,11 @@ def process_frame():
 		#resize it using the width we want
 		frame = imutils.resize(frame, width=WIDTH)
 		# add the watermark to the image
-		cv2.putText(frame, watermark, position, font, fontScale, fontColor, lineThickness)
+		cv2.putText(frame, watermark, positionWatermark, font, fontScaleWatermark, fontColor, lineThickness)
+		# get time
+		time = datetime.datetime.now()
+		# write text
+		cv2.putText(frame, time.strftime(FORMAT), positionTimestamp, font, fontScaleTimestamp, fontColor, lineThickness)
 		# acquire the lock, set the output frame, and release the
 		# lock
 		with lock:
