@@ -2,15 +2,22 @@
 # python webstreaming.py --ip 0.0.0.0 --port 8000
 
 # import the necessary packages
+# grabbing frames from the camera
 from imutils.video import VideoStream
+# web server (builds the web page)
 from flask import Response
 from flask import Flask
 from flask import render_template
+# allows multiple clients to connect at the same time
 import threading
+# parse arguments
 import argparse
+# time / date
 import datetime
-import imutils
 import time
+# rework / treat images
+import imutils
+# openCV
 import cv2
 
 # distance from the border for the text
@@ -19,23 +26,32 @@ OFFSET = 10
 # temp width, adjust with smartphone / ... width
 WIDTH = 800
 
-# timestamp FORMATTING
-FORMAT = "%m/%d/%Y, %H:%M:%S"
+# timestamp FORMATTING: dd/mm/yyyy, hh:mm:ss
+FORMAT = "%d/%m/%Y, %H:%M:%S"
 
 # general text stuff
+# set font
 font = cv2.FONT_HERSHEY_SIMPLEX
+# set color
 fontColor = (0, 0, 255) # red
+# set line thickness
 lineThickness = 1
 
 # text stuff for the watermark
 watermark = "Drone V2 ISFATES - Camera Embarquee"
+# size of the text
 fontScaleWatermark = 0.5
+# get the width and height to position the text better
 (tmpWidth, tmpHeight) = cv2.getTextSize(watermark, font, fontScaleWatermark, lineThickness)
+# position for the watermark. Bottom left corner.
 positionWatermark = (OFFSET, OFFSET + tmpHeight * 2)
 
 # positioning stuff for the timestamp
+# position for the timestamp. Bottom left corner
 positionTimestamp = (OFFSET, (OFFSET + tmpHeight*2)*2)
+# get the time
 time = datetime.datetime.now()
+# font size
 fontScaleTimestamp = 0.4
 
 
@@ -59,6 +75,7 @@ def index():
 
 def process_frame():
 	# needs to run in a loop, otherwise the app will only display one frame
+	# updates the image on every run
 	while True:
 		# grab global references to the video stream, output frame, and
 		# lock variables
@@ -71,11 +88,12 @@ def process_frame():
 		cv2.putText(frame, watermark, positionWatermark, font, fontScaleWatermark, fontColor, lineThickness)
 		# get time
 		time = datetime.datetime.now()
-		# write text
+		# write time to the image
 		cv2.putText(frame, time.strftime(FORMAT), positionTimestamp, font, fontScaleTimestamp, fontColor, lineThickness)
 		# acquire the lock, set the output frame, and release the
 		# lock
 		with lock:
+			# write the "finished" frame to the variable to be updated on the webpage
 			outputFrame = frame.copy()
 		
 def generate():
@@ -117,11 +135,9 @@ if __name__ == '__main__':
 		help="ip address of the device")
 	ap.add_argument("-o", "--port", type=int, required=True,
 		help="ephemeral port number of the server (1024 to 65535)")
-	ap.add_argument("-f", "--frame-count", type=int, default=32,
-		help="# of frames used to construct the background model")
 	args = vars(ap.parse_args())
 
-	# start a thread that will perform motion detection
+	# start a thread that will process the frames
 	t = threading.Thread(target=process_frame)
 	t.daemon = True
 	t.start()
