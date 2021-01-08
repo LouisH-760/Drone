@@ -1,0 +1,12 @@
+[Unit]
+Description=Système de streaming Caméra / Raspberry pi
+After=network-online.target
+
+[Install]
+WantedBy=default.target
+
+[Service]
+# needs to run as root to start on port 80!
+User=root
+# 0.0.0.0: listens on everything
+ExecStart=/usr/bin/python3 /home/pi/stream-video-browser/webstreaming.py -i 0.0.0.0 -o 80
