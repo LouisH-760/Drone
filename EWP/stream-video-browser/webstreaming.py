@@ -14,7 +14,7 @@ import threading
 import argparse
 # time / date
 import datetime
-import time
+import time as t
 # rework / treat images
 import imutils
 # openCV
@@ -65,8 +65,11 @@ lock = threading.Lock()
 app = Flask(__name__)
 
 # initialize the video stream
-#vs = VideoStream(usePiCamera=1).start()
-vs = VideoStream(src=0).start()
+vs = VideoStream(usePiCamera=1).start()
+#vs = VideoStream(src=0).start()
+# camera warmup time
+t.sleep(2.0)
+
 
 @app.route("/")
 def index():
