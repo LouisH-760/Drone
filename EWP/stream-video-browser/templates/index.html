@@ -1,8 +1,8 @@
 <html>
 
 <head>
-	<link rel="stylesheet" href="./bootstrap.min.css">
-	<link rel="stylesheet" href="custom.css">
+	<link rel="stylesheet" href="{{url_for('static', filename='bootstrap.min.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='custom.css')}}">
 	<title>Drone V2</title>
 </head>
 
@@ -14,7 +14,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<img src="{{ url_for('video_feed') }}" alt="video feed" style="margin: 0 auto; display: block">
+			<img src="{{ url_for('video_feed') }}" alt="video feed" style="margin: 0 auto; display: block; max-width: 800px; height: auto">
 		</div>
 		<hr>
 		<div class="row logos">
@@ -22,19 +22,19 @@
 				
 			</div>
 			<div class="col-sm-6 col-md-2">
-				<img src="img/1280px-Logo_Université_de_Lorraine.svg.png" alt="univLorraine">
+				<img src="{{url_for('static', filename='img/1280px-Logo_Université_de_Lorraine.svg.png')}}" alt="univLorraine">
 			</div>
 			<div class="col-sm-6 col-md-2">
-				<img src="img/AGELIS_logo.png" alt="AGELIS_logo">
+				<img src="{{url_for('static', filename='img/AGELIS_logo.png')}}" alt="AGELIS_logo">
 			</div>
 			<div class="col-sm-6 col-md-2">
-				<img src="img/DITEX-logo-or-noir.png" alt="ditex">
+				<img src="{{url_for('static', filename='img/DITEX-logo-or-noir.png')}}" alt="ditex">
 			</div>
 			<div class="col-sm-12 col-md-2">
-				<img src="img/220px-Dfhi_isfates_logo_2017_ZW.png" alt="isfates">
+				<img src="{{url_for('static', filename='img/220px-Dfhi_isfates_logo_2017_ZW.png')}}" alt="isfates">
 			</div>
 			<div class="col-sm-6 col-md-2">
-				<img src="img/Logo_FondationADT_300dpi.jpg" alt="adt">
+				<img src="{{url_for('static', filename='img/Logo_FondationADT_300dpi.jpg')}}" alt="adt">
 			</div>
 			<div class="col-1 padding">
 				

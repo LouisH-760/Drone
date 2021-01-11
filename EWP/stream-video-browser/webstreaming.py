@@ -62,7 +62,10 @@ outputFrame = None
 lock = threading.Lock()
 
 # initialize a flask object
-app = Flask(__name__)
+app = Flask(__name__,
+				static_url_path='',
+				static_folder='templates',
+				template_folder='templates')
 
 # initialize the video stream
 vs = VideoStream(usePiCamera=1).start()
