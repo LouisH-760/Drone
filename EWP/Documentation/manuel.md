@@ -24,6 +24,34 @@ Nous utilisons un Raspberry pi 4B avec 4G de RAM. Cependant, le programme devrai
 4. opencv (̀`sudo apt install python3-opencv`)
 5. imutils (`pip3 install imutils && sudo pip3 install imutils`)
 
+Nous avons suivi [__ce guide__](https://www.instructables.com/Raspberry-Pi-Web-Server-Wireless-Access-Point-WAP/) en majorité pour l'installation du raspberry pi avec quelques modifications: pas de driver pour la carte wifi, et d'autres adaptations spécifiques au raspberry pi. Cela utilise `hostapd` et `isc-dhcp-server`. Passer de `isc-dhcp-server` à `dnsmasq` (comme par exemple sur [__ce guide__](https://thepi.io/how-to-use-your-raspberry-pi-as-a-wireless-access-point/)) serait une amélioration. Attention au minimum dans le cas de isc-dhcp-server à décativer `dhcpcd`: 
+
+```bash
+sudo systemctl stop dhcpcd
+sudo systemctl disable dhcpcd
+```
+
+Se connecter au Raspberry Pi déja configuré
+----
+
+On ne peut pas se connecter au Raspberry pi configuré "de l'exterieur".
+
+Pour se connecter, il faut:
+
+1. se connecter au réseau WiFi du raspberry pi (`DroneV2` - voir annexe)
+2. Se connecter avec ssh au raspberry pi: (Voire annexe pour user/pw)
+```bash
+ssh pi@192.168.42.1
+```
+
+Afficher le site (Aussi pour les utilisateurs)
+----
+
+Il faut:
+
+1. Se connecter au réseau WiFi du Raspberry Pi (`DroneV2` - voir annexe)
+2. Se connecter à l'adresse du raspberry pi (`192.168.42.1`) sur un navigateur. L'idéal serait d'avoir un QR code à scanner au moins pour cette étape
+
 Lancer le code
 ====
 
@@ -84,6 +112,23 @@ $$\pagebreak$$
 
 Annexe
 ====
+
+Informations de connexion
+----
+
+### Wifi
+
+- SSID: `DroneV2`
+- MdP: `droneisfates2020`
+- IP du raspberry pi: `192.168.42.1`
+
+### Raspberry pi:
+
+- Utilisateur: `pi`
+- Mot de Passe: `raspberry`
+
+Code
+----
 
 Fichier de configuration `droneEWP.service` complet:
 
