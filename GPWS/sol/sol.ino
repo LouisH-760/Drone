@@ -1,25 +1,30 @@
 // pins
-#define WARNING 2
-#define DANGER 3
+#define WARNING 12
+#define DANGER 13
 #define STATUS 4
+#define TRIG 5
+#define ECHO 4
 // other constants
 // delay for on-time for tests
 #define TEST_DELAY 100
 // delay for the blinking after a malfunction
 #define MALFUNC_DELAY 500
-// what bauds to use for serial communication
-// remove for production code!
+// Speed of sound
+// CENTIMETERS PER MICROSECOND
+#define SOUND 0.034
+
 #define BAUDS 9600
 // heights for different stuff
 // PLACEHOLDER VALUES!
 // GROUND <-> danger zone <-> MAX_DANGER <-> warning zone <-> MAX_WARNING <-> normal flight <-> +inf
 #define GROUND 0
-#define MAX_DANGER 20
-#define MAX_WARNING 50
-#define MAX_START_HEIGHT 10
+#define MAX_DANGER 50
+#define MAX_WARNING 100
+#define MAX_START_HEIGHT 15
 #define MIN_REAL_HEIGHT 0
 // variables
 int height;
+long duration;
 
 /**
  * Test Digital Outputs
@@ -60,8 +65,6 @@ void test(int count, ...) {
  * NO PIN SKIPPING
  */
 void malfunction(int beginPin, int endPin) {
-  // remove for production code!
-  Serial.println("Malfonction - bloqué, RESET pour relancer!");
   // actual code
   while(true) {
       for(int i = beginPin; i <= endPin; i++) {
@@ -81,15 +84,17 @@ void malfunction(int beginPin, int endPin) {
  * args: h (pointer to the (int) height variable
  */
 void updateHeight(int *h) {
-  // temporary code using the debugging input
-  delay(500);
-  if(digitalRead(12) == HIGH && digitalRead(13) == LOW && *h > 0) {
-    *h -= 5;  
-  } else if(digitalRead(12) == LOW && digitalRead(13) == HIGH && *h < 100) {
-    *h += 5;
-  } else if(digitalRead(12) == HIGH && digitalRead(13) == HIGH) {
-    *h = MIN_REAL_HEIGHT - 10;
-  }
+  // clear Trig
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+  // send 10 ms inpulse
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+
+  // read return delay
+  duration = pulseIn(ECHO, HIGH);
+  height = duration*SOUND/2;
 }
 
 void setup() {
@@ -97,11 +102,6 @@ void setup() {
   // serial communication setup
   Serial.begin(BAUDS);
   Serial.println("START==========================================");
-  // if analog input pin 0 is unconnected, random analog
-  // noise will cause the call to randomSeed() to generate
-  // different seed numbers each time the code runs.
-  // randomSeed() will then shuffle the random function.
-  randomSeed(analogRead(0));
   
   // set WARNING as OUTPUT
   pinMode(WARNING, OUTPUT);
@@ -111,6 +111,13 @@ void setup() {
   
   // set STATUS as OUTPUT
   pinMode(STATUS, OUTPUT);
+
+  // set trig as output
+  pinMode(TRIG, OUTPUT);
+
+  // set echo as input
+
+ pinMode(ECHO, INPUT);
 
   // test all LEDS
   test(3, WARNING, DANGER, STATUS);
