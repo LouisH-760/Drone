@@ -1,8 +1,13 @@
 // pins
+// pin for the warning led (orange/yellow)
 #define WARNING 12
+// pin for the danger led (red)
 #define DANGER 13
+// pin for the status led (green)
 #define STATUS 4
+// pin on which the TRIGGER pin of the sensor is connected
 #define TRIG 5
+// pin on which the ECHO pin of the sensor is connected
 #define ECHO 4
 // other constants
 // delay for on-time for tests
@@ -12,7 +17,7 @@
 // Speed of sound
 // CENTIMETERS PER MICROSECOND
 #define SOUND 0.034
-
+// for serial communication with the arduino software for debugging
 #define BAUDS 9600
 // heights for different stuff
 // PLACEHOLDER VALUES!
@@ -23,7 +28,9 @@
 #define MAX_START_HEIGHT 15
 #define MIN_REAL_HEIGHT 0
 // variables
+// height to the ground from the sensor
 int height;
+// pulse duration for distance coputation
 long duration;
 
 /**
